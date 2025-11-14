@@ -1,0 +1,46 @@
+name: Run test_suite
+
+on:
+  workflow_dispatch:
+    inputs:
+      test_environments:
+        description: Redmineバージョン/DB の組み合わせ
+        required: true
+        type: choice
+        options:
+          - '6.0/postgres'
+          - '5.0/mysql'
+      test_suite:
+        description: テストするプラグイン
+        required: true
+        type: choice
+        options:
+          - sample
+      branch_name:
+        description: ブランチ名
+        required: true
+        type: string
+      slack_mentions:
+        description: メンションするユーザー
+        required: true
+        type: choice
+        options:
+          - kumojima
+
+jobs:
+  run_tests:
+    runs-on: ubuntu-latest
+
+    steps:
+      - uses: actions/checkout@v5
+      - uses: ruby/setup-ruby@v1
+        with:
+          ruby-version: 3.2
+      - run: echo "${{ github.run_id }}" > output.txt
+      - name: Create new branch and push
+        run: |
+          BRANCH="test/${{ github.run_id }}"
+          git checkout -b $BRANCH
+          git add output.txt
+          git commit -m "Update config"
+          git push origin $BRANCH
