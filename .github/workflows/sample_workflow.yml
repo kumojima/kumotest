@@ -39,6 +39,8 @@ jobs:
       - run: echo "${{ github.run_id }}" > output.txt
       - name: Create new branch and push
         run: |
+          git config --global user.email "41898282+github-actions[bot]@users.noreply.github.com"
+          git config --global user.name "github-actions[bot]"
           BRANCH="test/${{ github.run_id }}"
           git checkout -b $BRANCH
           git add output.txt
